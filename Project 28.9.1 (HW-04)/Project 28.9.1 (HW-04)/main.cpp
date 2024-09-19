@@ -142,11 +142,10 @@ void mergeParallel(int* arr, int length, int threadsNum)
         lengthToProcess = lengthToProcess - lengthInThread;
         stop = start + lengthInThread - 1;
         auto handle = [](int* arr, const int& start, const int& stop)
-        { merge(arr, start, stop); }; // Лямбда-функция для выполнения потоками
         std::packaged_task<void(int*, const int&, const int&)> task1(handle); // Задача для получения future
         futures.push_back(std::move(task1.get_future()));
         std::thread thread(std::move(task1), arr, start, stop); // Запускаем потоки
-        thread.detach();
+        thread.join();
 
         stopIndexes.push_back(stop);
         start = stop + 1;
